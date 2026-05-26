@@ -424,24 +424,19 @@ body {
 <p class="disclaimer">Powered by AI. History is messy, models aren't perfect, and some of these figures had very good PR teams. Always read further.</p>
 
 <script>
-const SYSTEM_PROMPT = `You are a gleefully thorough historical researcher. Research the given figure and cover ALL 15 categories below. Return ONLY raw JSON with no markdown, no backticks, no text before or after — just the JSON object.
+const SYSTEM_PROMPT = `You are a gleefully thorough historical researcher. Research the given figure and cover ALL 10 categories below. Return ONLY raw JSON with no markdown, no backticks, no text before or after — just the JSON object.
 
-Categories:
-1. Slave Ownership — owned enslaved people? How many, when, documented evidence.
-2. Colonial Exploitation — colonialism, conquest, exploitation of indigenous peoples. Specific acts.
-3. War Crimes / Atrocities — massacres, torture, systematic violence. Named events and casualty figures.
-4. Racial or Ethnic Persecution — policies targeting people by race or ethnicity.
-5. Religious Persecution — inquisitions, forced conversions, religious executions.
-6. Scientific or Medical Ethics — human experimentation, eugenics, forced sterilizations.
-7. Treatment of Women / Gender Oppression — laws or conduct denying women rights.
-8. LGBTQ+ Persecution — laws or acts criminalizing LGBTQ+ people.
-9. Economic Exploitation — debt bondage, land seizure, labor exploitation.
-10. Environmental Destruction — large-scale environmental harm they ordered or enabled.
-11. Corruption / Abuse of Power — embezzlement, bribery, persecution of opponents.
-12. Personal Vices & Bad Habits — documented excesses: drinking, gambling, affairs, addiction. Specific accounts.
-13. Personal Hygiene & Grooming — documented historical accounts of cleanliness or lack thereof. Many famous figures have well-documented hygiene issues — be specific.
-14. Difficult Personality / Got on People's Nerves — documented accounts of being insufferable, vain, petty, temperamental, paranoid, or just deeply annoying to those around them. Contemporaries' complaints, famous feuds, known personality flaws.
-15. Positive Legacy — humanitarian reforms, philanthropy, rights expansions, scientific advances. Named acts, dates, scale.
+Categories (all 10 required):
+1. Slave Ownership — did they own enslaved people? How many, when, with what justification. Don't let them off easy.
+2. Colonial Conquest & Racial Persecution — colonialism, conquest, ethnic cleansing, exploitation of indigenous peoples, racist policies. Name the places and peoples, note the body count.
+3. War Crimes & Atrocities — massacres, sieges, torture, civilian slaughter. Named events, estimated casualties. If they called it "necessary," note that.
+4. Treatment of Women — laws, policies, or personal conduct that treated women as property, obstacles, or afterthoughts. Include the personal if documented.
+5. Corruption & Abuse of Power — embezzlement, nepotism, bribery, silencing opponents, rewriting history in their favour. How did they use power when no one was looking?
+6. Personal Vices & Bad Habits — drinking, gambling, affairs, addiction, reckless spending, general dissolution. The messier the better. Cite contemporaries.
+7. Personal Hygiene & Grooming — this is more historically juicy than people expect. Documented accounts of smell, cleanliness, teeth, habits. Be specific and do not spare feelings.
+8. Difficult Personality & Famous Feuds — vanity, paranoia, pettiness, legendary rudeness, insufferable habits, famous fallings-out. What did the people around them actually think? Quote them if possible.
+9. Crimes Against Taste & Judgment — catastrophically bad decisions, embarrassing obsessions, delusional self-image, spectacular failures of wisdom. The things history politely glosses over.
+10. Positive Legacy — anything genuinely good they did. Reforms, philanthropy, advances. Be grudging about it.
 
 JSON format:
 {
@@ -459,7 +454,7 @@ JSON format:
   "researchNote": "A dry, knowing aside about the state of the historical record — what's solid, what's contested, and whether this person's reputation has aged well or been thoroughly revised."
 }
 
-Include all 15 categories. Use denied if no evidence. Be specific and factual.`;
+Include all 10 categories. Use denied if no evidence. Be specific and factual.`;
 
 const STATUSES = [
   'Dusting off the archives…',
@@ -520,7 +515,7 @@ async function callAI(apiKey, userPrompt) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile', max_tokens: 3000, temperature: 0.2,
+        model: 'llama-3.3-70b-versatile', max_tokens: 4500, temperature: 0.2,
         messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: userPrompt }]
       })
     });
@@ -537,7 +532,7 @@ async function callAI(apiKey, userPrompt) {
         'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514', max_tokens: 3000, system: SYSTEM_PROMPT,
+        model: 'claude-sonnet-4-20250514', max_tokens: 4500, system: SYSTEM_PROMPT,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         messages: [{ role: 'user', content: userPrompt }]
       })
@@ -552,7 +547,7 @@ async function callAI(apiKey, userPrompt) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
       body: JSON.stringify({
-        model: 'gpt-4o-mini', max_tokens: 3000, temperature: 0.2,
+        model: 'gpt-4o-mini', max_tokens: 4500, temperature: 0.2,
         messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: userPrompt }]
       })
     });
@@ -567,7 +562,7 @@ async function callAI(apiKey, userPrompt) {
       systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
       contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
       ...(search ? { tools: [{ google_search: {} }] } : {}),
-      generationConfig: { temperature: 0.2, maxOutputTokens: 3000 }
+      generationConfig: { temperature: 0.2, maxOutputTokens: 4500 }
     });
     let r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body(true)) });
     if (!r.ok) r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body(false)) });
@@ -634,6 +629,32 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Search ──
 function prefill(n) { document.getElementById('nameInput').value = n; document.getElementById('nameInput').focus(); }
 
+
+// ── JSON repair for truncated responses ──
+function repairJSON(str) {
+  // Close any open string
+  const quoteCount = (str.match(/(?<!\\)"/g) || []).length;
+  if (quoteCount % 2 !== 0) str += '"';
+  // Close open structures by counting braces and brackets
+  let opens = 0, aopens = 0;
+  let inStr = false, escape = false;
+  for (const c of str) {
+    if (escape) { escape = false; continue; }
+    if (c === '\\') { escape = true; continue; }
+    if (c === '"') { inStr = !inStr; continue; }
+    if (inStr) continue;
+    if (c === '{') opens++;
+    if (c === '}') opens--;
+    if (c === '[') aopens++;
+    if (c === ']') aopens--;
+  }
+  // Strip trailing comma before closing
+  str = str.replace(/,\s*$/, '');
+  while (aopens > 0) { str += ']'; aopens--; }
+  while (opens > 0) { str += '}'; opens--; }
+  return JSON.parse(str);
+}
+
 async function runSearch() {
   const name   = document.getElementById('nameInput').value.trim();
   const apiKey = localStorage.getItem('dirt_api_key') || '';
@@ -660,9 +681,23 @@ async function runSearch() {
   try {
     const raw = await callAI(apiKey, 'Research the full historical ethical profile of: ' + name);
     const cleaned = raw.replace(/```json|```/gi, '').trim();
-    const s = cleaned.indexOf('{'), e = cleaned.lastIndexOf('}');
+    const s = cleaned.indexOf('{');
     if (s === -1) throw new Error('No JSON in response. Got: ' + raw.slice(0,300));
-    renderResults(JSON.parse(cleaned.slice(s, e+1)));
+    let jsonStr = cleaned.slice(s);
+    // Try parsing as-is first
+    let parsed;
+    try {
+      const e = jsonStr.lastIndexOf('}');
+      parsed = JSON.parse(jsonStr.slice(0, e+1));
+    } catch(e1) {
+      // Response was likely truncated — attempt repair
+      try {
+        parsed = repairJSON(jsonStr);
+      } catch(e2) {
+        throw new Error('Could not parse response (possibly truncated). Try again — ' + e1.message);
+      }
+    }
+    renderResults(parsed);
   } catch(err) {
     showError('Shovel broke: ' + err.message);
   } finally {
