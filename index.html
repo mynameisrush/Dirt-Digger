@@ -156,6 +156,87 @@ body {
 }
 .pill:hover { border-color: var(--sun); color: var(--sun); background: #fff3d6; }
 
+.key-section {
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: 1.2rem;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.key-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.key-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.key-link {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--sun);
+  text-decoration: none;
+}
+.key-link:hover { text-decoration: underline; }
+
+.key-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.key-input {
+  flex: 1;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  padding: 0.55rem 1rem;
+  font-family: monospace;
+  font-size: 0.82rem;
+  color: var(--ink);
+  outline: none;
+  background: var(--bg);
+  min-width: 0;
+  transition: border-color 0.15s;
+}
+.key-input:focus { border-color: var(--sun); }
+.key-input::placeholder { color: #ccc; font-family: "DM Sans", sans-serif; font-size: 0.78rem; }
+
+.key-btn {
+  flex-shrink: 0;
+  padding: 0.5rem 1.1rem;
+  background: var(--lime);
+  color: var(--ink);
+  border: none;
+  border-radius: 99px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.key-btn:hover { opacity: 0.85; }
+
+.key-saved { background: #d1fae5 !important; color: #065f46 !important; }
+.key-confirmed {
+  font-size: 0.72rem;
+  color: #1e8449;
+  font-weight: 600;
+  margin-top: 0.4rem;
+  display: none;
+}
+.key-confirmed.visible { display: block; }
+
 .status-bar {
   display: none;
   align-items: center;
@@ -380,6 +461,17 @@ body {
   <p class="sub">Famous, infamous, or somewhere in between — let's see what skeletons are rattling around.</p>
 </header>
 
+<div class="key-section" id="keySection">
+  <div class="key-top">
+    <label class="key-label" for="keyInput">Groq API Key</label>
+    <a class="key-link" href="https://console.groq.com/keys" target="_blank">Get a free key →</a>
+  </div>
+  <div class="key-row">
+    <input type="password" id="keyInput" class="key-input" placeholder="Paste your key here — it stays in your browser, never goes online" autocomplete="off" spellcheck="false">
+    <button class="key-btn" onclick="saveKey()">Save</button>
+  </div>
+</div>
+
 <section class="search-section">
   <div class="search-box">
     <input type="text" id="nameInput" class="search-input" placeholder="Name your suspect…" autocomplete="off" spellcheck="false">
@@ -425,7 +517,7 @@ body {
 <p class="disclaimer">Powered by Llama 3 via Groq. History is messy, AI isn't perfect, and some of these figures had very good PR teams. Always read further.</p>
 
 <script>
-const GROQ_KEY = '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';
+const GROQ_KEY = localStorage.getItem('dirt_groq_key') || '';
 
 const SYSTEM_PROMPT = `You are a rigorous historical researcher. When given a historical figure's name, build a detailed factual ethical profile covering ALL 12 of these categories:
 
@@ -483,6 +575,29 @@ const STATUS_STEPS = [
   'Almost done — this one\'s a lot of dirt…',
 ];
 
+function saveKey() {
+  const val = document.getElementById('keyInput').value.trim();
+  if (!val) return;
+  localStorage.setItem('dirt_groq_key', val);
+  const btn = document.querySelector('.key-btn');
+  btn.textContent = 'Saved!';
+  btn.classList.add('key-saved');
+  document.getElementById('keySection').style.background = '';
+  document.getElementById('keySection').style.borderColor = '';
+  document.getElementById('errorMsg').classList.remove('visible');
+  setTimeout(() => { btn.textContent = 'Save'; btn.classList.remove('key-saved'); }, 2000);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('dirt_groq_key');
+  if (saved) {
+    document.getElementById('keyInput').value = saved;
+  }
+  document.getElementById('keyInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveKey();
+  });
+});
+
 function prefill(name) {
   document.getElementById('nameInput').value = name;
   document.getElementById('nameInput').focus();
@@ -493,7 +608,15 @@ document.getElementById('nameInput').addEventListener('keydown', e => {
 });
 
 async function runSearch() {
-  const name = document.getElementById('nameInput').value.trim();
+  const name   = document.getElementById('nameInput').value.trim();
+  const apiKey = localStorage.getItem('dirt_groq_key') || '';
+  if (!apiKey) {
+    document.getElementById('keySection').style.background = '#fff0ee';
+    document.getElementById('keySection').style.borderColor = '#f5b7b1';
+    document.getElementById('keyInput').focus();
+    showError('Paste your free Groq API key above to get started. Get one at console.groq.com/keys — it takes 2 minutes and is free.');
+    return;
+  }
   if (!name) return;
 
   const btn       = document.getElementById('searchBtn');
@@ -519,7 +642,7 @@ async function runSearch() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + GROQ_KEY
+        'Authorization': 'Bearer ' + apiKey
       },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
