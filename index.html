@@ -403,7 +403,7 @@ JSON format:
       "detail": "Specific factual detail with dates, numbers, names. Be precise."
     }
   ],
-  "researchNote": "Brief note on scholarship quality and any contested claims."
+  "researchNote": "A dry, knowing aside about the state of the historical record — what's solid, what's contested, and whether this person's reputation has aged well or been thoroughly revised."
 }
 
 Include all 15 categories. Use denied if no evidence. Be specific and factual.`;
@@ -431,17 +431,17 @@ function getVerdict(category, verdict) {
   if (isPositive) {
     const map = {
       confirmed: { label: 'Ugh, fine.',       icon: 'UGH',  iconCls: 'fi-disappoint',  badgeCls: 'fv-disappoint'  },
-      denied:    { label: 'Predictably not',  icon: 'NAH',  iconCls: 'fi-predictable', badgeCls: 'fv-predictable' },
-      nuanced:   { label: 'Debatable credit', icon: 'MEH',  iconCls: 'fi-hard',        badgeCls: 'fv-hard'        },
+      denied:    { label: 'Nope',             icon: 'NOPE', iconCls: 'fi-predictable', badgeCls: 'fv-predictable' },
+      nuanced:   { label: 'Debatable',        icon: 'MEH',  iconCls: 'fi-hard',        badgeCls: 'fv-hard'        },
       unclear:   { label: "Jury's out",       icon: '?',    iconCls: 'fi-jury',        badgeCls: 'fv-jury'        },
     };
     return map[verdict] || map.unclear;
   }
   const map = {
-    confirmed: { label: 'Guilty',       icon: 'GLTÝ', iconCls: 'fi-guilty',   badgeCls: 'fv-guilty'   },
-    denied:    { label: 'Innocent',     icon: 'INNC', iconCls: 'fi-innocent', badgeCls: 'fv-innocent' },
-    nuanced:   { label: 'Hard to say',  icon: 'HMM',  iconCls: 'fi-hard',    badgeCls: 'fv-hard'     },
-    unclear:   { label: "Jury's out",   icon: '?',    iconCls: 'fi-jury',    badgeCls: 'fv-jury'     },
+    confirmed: { label: 'Guilty',       icon: 'YES',  iconCls: 'fi-guilty',   badgeCls: 'fv-guilty'   },
+    denied:    { label: 'Innocent',     icon: 'NO',   iconCls: 'fi-innocent', badgeCls: 'fv-innocent' },
+    nuanced:   { label: 'Hard to say',  icon: 'SORT',  iconCls: 'fi-hard',    badgeCls: 'fv-hard'     },
+    unclear:   { label: "Jury's out",   icon: 'IDK',  iconCls: 'fi-jury',    badgeCls: 'fv-jury'     },
   };
   return map[verdict] || map.unclear;
 }
