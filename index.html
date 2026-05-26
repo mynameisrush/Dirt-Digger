@@ -244,6 +244,55 @@ body {
   font-size: 0.72rem; font-weight: 600; cursor: pointer; flex-shrink: 0; transition: all 0.15s;
 }
 .hs-dismiss:hover { border-color: rgba(245,240,232,0.6); color: var(--bg); }
+
+/* ── Share bar ── */
+.share-bar {
+  padding: 1rem 1.5rem 1.3rem;
+  border-top: 1.5px solid var(--border);
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.share-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.7rem 1rem;
+  border-radius: 99px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid var(--ink);
+  transition: all 0.15s;
+  text-align: center;
+}
+.share-btn-primary {
+  background: var(--ink);
+  color: #fff;
+}
+.share-btn-primary:hover { background: var(--sun); border-color: var(--sun); color: var(--ink); }
+.share-btn-secondary {
+  background: transparent;
+  color: var(--ink);
+}
+.share-btn-secondary:hover { background: var(--border); }
+.share-copied {
+  background: #eafaf1 !important;
+  border-color: var(--lime) !important;
+  color: var(--lime) !important;
+}
+</style>
+
+<style media="print">
+  .topbar, .key-panel, .hero, .search-section, .status-bar,
+  .error-box, .disclaimer, .hs-banner, .share-bar { display: none !important; }
+  body { background: white; padding: 0; }
+  .results-card {
+    display: block !important; box-shadow: none !important;
+    border: none !important; max-width: 100% !important;
+  }
+  .card-head { padding: 1rem; }
+  .person-name { font-size: 2rem; }
 </style>
 </head>
 <body>
@@ -365,6 +414,10 @@ body {
   <div class="research-note">
     <div class="rn-label">Research note</div>
     <div class="rn-text" id="researchNote"></div>
+  </div>
+  <div class="share-bar">
+    <button class="share-btn share-btn-primary" id="shareBtn" onclick="shareResults()">Send to a friend</button>
+    <button class="share-btn share-btn-secondary" id="pdfBtn" onclick="printResults()">Save as PDF</button>
   </div>
 </article>
 
@@ -679,6 +732,70 @@ function initBanner() {
 document.addEventListener('DOMContentLoaded', () => {
   initBanner();
 });
+
+// ── Share / Export ──
+function buildShareText() {
+  const name    = document.getElementById('resultName').textContent;
+  const dates   = document.getElementById('resultDates').textContent;
+  const summary = document.getElementById('summaryText').textContent;
+  const badge   = document.getElementById('ratingBadge').textContent;
+  const note    = document.getElementById('researchNote').textContent;
+
+  let text = `DIRT DIGGER — ${name}${dates ? ' (' + dates + ')' : ''}\nVerdict: ${badge}\n\n${summary}\n\n`;
+
+  document.querySelectorAll('.finding').forEach(row => {
+    const cat     = row.querySelector('.find-cat')?.textContent || '';
+    const verdict = row.querySelector('.find-verdict')?.textContent || '';
+    const detail  = row.querySelector('.find-detail')?.textContent || '';
+    text += `${cat}: ${verdict}\n${detail}\n\n`;
+  });
+
+  text += `Research note: ${note}\n\n— dug up by Dirt Digger`;
+  return text;
+}
+
+async function shareResults() {
+  const name = document.getElementById('resultName').textContent;
+  const text = buildShareText();
+  const btn  = document.getElementById('shareBtn');
+
+  // Try native share sheet first (iOS/Android)
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'Dirt Digger — ' + name, text });
+      return;
+    } catch(e) {
+      if (e.name === 'AbortError') return; // user cancelled
+    }
+  }
+
+  // Fallback: copy to clipboard
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = 'Copied to clipboard!';
+    btn.classList.add('share-copied');
+    setTimeout(() => {
+      btn.textContent = 'Send to a friend';
+      btn.classList.remove('share-copied');
+    }, 2500);
+  } catch(e) {
+    // Last resort: select a textarea
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = 'Copied!';
+    btn.classList.add('share-copied');
+    setTimeout(() => { btn.textContent = 'Send to a friend'; btn.classList.remove('share-copied'); }, 2000);
+  }
+}
+
+function printResults() {
+  window.print();
+}
 </script>
 </body>
 </html>
