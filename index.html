@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#fff9ed">
-<meta name="description" content="Dirt Digger — uncover the historical record on famous figures">
 <title>Dirt Digger</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -17,7 +16,7 @@
   --ink: #1c1207;
   --muted: #7a6a50;
   --sun: #f5a623;
-  --lime: #7bc67e;
+  --lime: #5cb85c;
   --border: #ede4d0;
   --radius: 16px;
   --radius-sm: 10px;
@@ -34,14 +33,150 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2.5rem 1rem 5rem;
+  padding: 0 1rem 5rem;
 }
 
+/* ── Top bar ── */
+.topbar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.8rem 1.2rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.key-toggle-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  padding: 0.3rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.key-toggle-btn:hover { border-color: var(--sun); color: var(--sun); }
+.key-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #ccc;
+  flex-shrink: 0;
+}
+.key-dot.active { background: var(--lime); }
+
+/* ── Key panel ── */
+.key-panel {
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: 1.5rem;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 4px 4px 0 var(--ink);
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.key-panel-inner { padding: 1.2rem 1.4rem; }
+
+.key-panel-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+
+.key-panel-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.key-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.key-input {
+  flex: 1;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  padding: 0.6rem 1rem;
+  font-family: monospace;
+  font-size: 0.82rem;
+  color: var(--ink);
+  outline: none;
+  background: var(--bg);
+  min-width: 0;
+  transition: border-color 0.15s;
+}
+.key-input:focus { border-color: var(--sun); }
+.key-input::placeholder { color: #bbb; font-family: 'DM Sans', sans-serif; font-size: 0.78rem; }
+
+.key-save-btn {
+  flex-shrink: 0;
+  padding: 0.6rem 1.2rem;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 99px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.key-save-btn:hover { background: var(--sun); color: var(--ink); }
+
+.key-detected {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--lime);
+  min-height: 1rem;
+  margin-top: -0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.provider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.6rem;
+  border-top: 1.5px solid var(--border);
+  padding-top: 1rem;
+}
+
+.provider-card {
+  display: block;
+  padding: 0.75rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, background 0.15s;
+}
+.provider-card:hover { border-color: var(--sun); background: #fffbf3; }
+
+.prov-name { font-size: 0.82rem; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.prov-free { font-size: 0.7rem; font-weight: 700; color: var(--lime); margin-bottom: 3px; }
+.prov-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.4; margin-bottom: 4px; }
+.prov-key  { font-size: 0.7rem; color: #aaa; font-family: monospace; }
+
+/* ── Hero ── */
 .hero {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   max-width: 620px;
   width: 100%;
+  padding-top: 1rem;
 }
 
 .eyebrow {
@@ -62,6 +197,688 @@ body {
   font-size: clamp(3rem, 9vw, 5.5rem);
   font-weight: 900;
   color: var(--ink);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.7rem;
+}
+.hero h1 .accent { color: var(--sun); }
+
+.hero .sub {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 380px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── Search ── */
+.search-section {
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: 1.5rem;
+}
+
+.search-box {
+  display: flex;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 99px;
+  overflow: hidden;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.search-box:focus-within { box-shadow: 6px 6px 0 var(--sun); border-color: var(--sun); }
+
+.search-input {
+  flex: 1;
+  padding: 1rem 1.4rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.05rem;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--ink);
+  font-weight: 500;
+  min-width: 0;
+}
+.search-input::placeholder { color: #bbb; font-weight: 400; }
+
+.search-btn {
+  margin: 6px;
+  padding: 0.65rem 1.5rem;
+  background: var(--ink);
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+.search-btn:hover { background: var(--sun); color: var(--ink); }
+.search-btn:active { transform: scale(0.97); }
+.search-btn:disabled { background: #ccc; color: #fff; cursor: not-allowed; }
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+  align-items: center;
+}
+.ex-label { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
+
+.pill {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.85rem;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  cursor: pointer;
+  background: var(--card);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.pill:hover { border-color: var(--sun); color: var(--sun); background: #fff3d6; }
+
+/* ── Status ── */
+.status-bar {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-weight: 500;
+  margin-bottom: 1.2rem;
+  padding: 0.8rem 1.4rem;
+  background: var(--card);
+  border-radius: 99px;
+  border: 1.5px solid var(--border);
+}
+.status-bar.visible { display: flex; }
+
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--sun);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Error ── */
+.error-msg {
+  display: none;
+  width: 100%;
+  max-width: 640px;
+  padding: 1rem 1.3rem;
+  background: #fff0ee;
+  border: 2px solid #f5b7b1;
+  border-radius: var(--radius-sm);
+  color: #c0392b;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 1rem;
+}
+.error-msg.visible { display: block; }
+
+/* ── Results ── */
+.results-card {
+  display: none;
+  width: 100%;
+  max-width: 640px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: 5px 5px 0 var(--ink);
+  overflow: hidden;
+  animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.results-card.visible { display: block; }
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+
+.card-head {
+  padding: 1.5rem 1.5rem 1.2rem;
+  border-bottom: 1.5px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.person-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.person-dates { font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-top: 3px; }
+
+.rating-badge {
+  flex-shrink: 0;
+  padding: 0.35rem 1rem;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 2px solid;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+.r-high    { background: #fff0ee; color: #c0392b; border-color: #f5b7b1; }
+.r-mod     { background: #fff8e6; color: #d68910; border-color: #f9e4a0; }
+.r-low     { background: #eafaf1; color: #1e8449; border-color: #a9dfbf; }
+.r-complex { background: #f4f6f7; color: #5d6d7e; border-color: #d5dbdb; }
+
+.summary {
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1.5px solid var(--border);
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: #3d3020;
+}
+
+.findings { padding: 1.2rem 1.5rem; }
+.findings-heading {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 0.9rem;
+}
+
+.finding {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.finding:last-child { border-bottom: none; }
+
+.find-icon {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: -0.02em;
+  margin-top: 1px;
+  text-align: center;
+  line-height: 1.1;
+}
+.fi-guilty      { background: #fff0ee; color: #c0392b; }
+.fi-innocent    { background: #eafaf1; color: #1e8449; }
+.fi-hard        { background: #fff8e6; color: #d68910; }
+.fi-jury        { background: #f4f6f7; color: #5d6d7e; }
+.fi-disappoint  { background: #f0f4ff; color: #3b5bdb; }
+.fi-predictable { background: #fdf0ff; color: #9c36b5; }
+
+.find-body { flex: 1; min-width: 0; }
+.find-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+  flex-wrap: wrap;
+}
+.find-cat { font-size: 0.82rem; font-weight: 700; color: var(--ink); }
+
+.find-verdict {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 9px;
+  border-radius: 99px;
+  border: 1.5px solid;
+  white-space: nowrap;
+}
+.fv-guilty      { background: #fff0ee; color: #c0392b; border-color: #f5b7b1; }
+.fv-innocent    { background: #eafaf1; color: #1e8449; border-color: #a9dfbf; }
+.fv-hard        { background: #fff8e6; color: #d68910; border-color: #f9e4a0; }
+.fv-jury        { background: #f4f6f7; color: #5d6d7e; border-color: #d5dbdb; }
+.fv-disappoint  { background: #f0f4ff; color: #3b5bdb; border-color: #bac8ff; }
+.fv-predictable { background: #fdf0ff; color: #9c36b5; border-color: #e9b8f7; }
+
+.find-detail { font-size: 0.875rem; color: #4a3f2e; line-height: 1.65; }
+
+.research-note {
+  padding: 1rem 1.5rem 1.3rem;
+  border-top: 1.5px solid var(--border);
+  background: #fffbf3;
+}
+.rn-label {
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 0.35rem;
+}
+.rn-text { font-size: 0.82rem; color: var(--muted); line-height: 1.6; font-style: italic; }
+
+.disclaimer {
+  max-width: 560px;
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+@media (max-width: 480px) {
+  .card-head { flex-direction: column; }
+  .findings, .summary, .research-note { padding-left: 1.1rem; padding-right: 1.1rem; }
+  .provider-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar" style="width:100%;">
+  <button class="key-toggle-btn" onclick="toggleKeyPanel()" id="keyToggleBtn">
+    <span class="key-dot" id="keyDot"></span>
+    <span id="keyToggleLabel">Set API Key</span>
+  </button>
+</div>
+
+<!-- Key panel -->
+<div class="key-panel" id="keyPanel" style="max-width:640px;width:100%;">
+  <div class="key-panel-inner">
+    <div class="key-panel-title">First things first — grab an API key</div>
+    <div class="key-panel-sub">Dirt Digger runs on AI. Pick any provider below, get a free key, paste it here. It stays in your browser and is never shared.</div>
+    <div class="key-row">
+      <input type="password" id="keyInput" class="key-input" placeholder="Paste your API key here…" autocomplete="off" spellcheck="false">
+      <button class="key-save-btn" onclick="saveKey()">Save</button>
+    </div>
+    <div class="key-detected" id="keyDetected"></div>
+    <div class="provider-grid">
+      <a class="provider-card" href="https://console.groq.com/keys" target="_blank">
+        <div class="prov-name">Groq</div>
+        <div class="prov-free">Free — no credit card</div>
+        <div class="prov-desc">Fast. Easy signup. Best starting point.</div>
+        <div class="prov-key">Key starts with gsk_</div>
+      </a>
+      <a class="provider-card" href="https://console.anthropic.com/settings/keys" target="_blank">
+        <div class="prov-name">Anthropic</div>
+        <div class="prov-free">Pay per use</div>
+        <div class="prov-desc">Claude + live web search for fresher results.</div>
+        <div class="prov-key">Key starts with sk-ant-</div>
+      </a>
+      <a class="provider-card" href="https://aistudio.google.com/app/apikey" target="_blank">
+        <div class="prov-name">Gemini</div>
+        <div class="prov-free">Free tier available</div>
+        <div class="prov-desc">Google's model via AI Studio.</div>
+        <div class="prov-key">Key starts with AIzaSy</div>
+      </a>
+      <a class="provider-card" href="https://platform.openai.com/api-keys" target="_blank">
+        <div class="prov-name">OpenAI</div>
+        <div class="prov-free">Pay per use</div>
+        <div class="prov-desc">GPT-4o mini. Requires billing setup.</div>
+        <div class="prov-key">Key starts with sk-</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="eyebrow">Est. since forever</div>
+  <h1>Dirt<br><span class="accent">Digger</span></h1>
+  <p class="sub">Famous, infamous, or somewhere in between — let's see what skeletons are rattling around.</p>
+</header>
+
+<!-- Search -->
+<section class="search-section">
+  <div class="search-box">
+    <input type="text" id="nameInput" class="search-input" placeholder="Name your suspect…" autocomplete="off" spellcheck="false">
+    <button class="search-btn" id="searchBtn" onclick="runSearch()">Dig it up</button>
+  </div>
+  <div class="examples">
+    <span class="ex-label">Try:</span>
+    <button class="pill" onclick="prefill('George Washington')">George Washington</button>
+    <button class="pill" onclick="prefill('Winston Churchill')">Winston Churchill</button>
+    <button class="pill" onclick="prefill('Napoleon Bonaparte')">Napoleon</button>
+    <button class="pill" onclick="prefill('Henry VIII')">Henry VIII</button>
+    <button class="pill" onclick="prefill('Cleopatra')">Cleopatra</button>
+    <button class="pill" onclick="prefill('Genghis Khan')">Genghis Khan</button>
+  </div>
+</section>
+
+<div class="status-bar" id="statusBar">
+  <div class="spinner"></div>
+  <span id="statusText">Dusting off the archives…</span>
+</div>
+
+<div class="error-msg" id="errorMsg"></div>
+
+<article class="results-card" id="resultsCard">
+  <div class="card-head">
+    <div>
+      <div class="person-name" id="resultName"></div>
+      <div class="person-dates" id="resultDates"></div>
+    </div>
+    <div class="rating-badge" id="ratingBadge"></div>
+  </div>
+  <div class="summary" id="summaryText"></div>
+  <div class="findings">
+    <div class="findings-heading">The dirt</div>
+    <div id="findingsList"></div>
+  </div>
+  <div class="research-note">
+    <div class="rn-label">Research note</div>
+    <div class="rn-text" id="researchNote"></div>
+  </div>
+</article>
+
+<p class="disclaimer">Powered by AI. History is messy, models aren't perfect, and some of these figures had very good PR teams. Always read further.</p>
+
+<script>
+const SYSTEM_PROMPT = `You are a gleefully thorough historical researcher who loves finding uncomfortable truths. Research the given historical figure and cover ALL 14 categories. Return ONLY raw JSON — no markdown, no backticks, no explanation.
+
+Categories to investigate:
+1. Slave Ownership — owned enslaved people? How many, when, documented evidence.
+2. Colonial Exploitation — colonialism, conquest, exploitation of indigenous peoples.
+3. War Crimes / Atrocities — massacres, torture, systematic violence. Named events, casualty figures.
+4. Racial or Ethnic Persecution — policies targeting people by race or ethnicity.
+5. Religious Persecution — inquisitions, forced conversions, religious executions.
+6. Scientific or Medical Ethics — human experimentation, eugenics, forced sterilizations.
+7. Treatment of Women / Gender Oppression — laws or conduct denying women rights or enabling abuse.
+8. LGBTQ+ Persecution — laws or acts criminalizing LGBTQ+ people.
+9. Economic Exploitation — debt bondage, land seizure, labor exploitation, theft of wealth.
+10. Environmental Destruction — large-scale environmental harm they ordered or enabled.
+11. Corruption / Abuse of Power — embezzlement, bribery, persecution of opponents, nepotism.
+12. Personal Vices & Bad Habits — documented excesses: drinking, gambling, affairs, addiction, reckless behavior. Be specific with documented accounts.
+13. Personal Hygiene & Grooming — documented historical accounts of their cleanliness or lack thereof. Be specific — historians have noted this about many figures.
+14. Positive Legacy — humanitarian reforms, philanthropy, rights expansions, scientific advances. Named acts, dates, scale.
+
+JSON structure:
+{
+  "name": "Full historical name",
+  "dates": "birth-death or era",
+  "overallRating": "high-concern" or "moderate-concern" or "low-concern" or "complex",
+  "summary": "2-3 sentence overview",
+  "findings": [
+    {
+      "category": "exact category name from above",
+      "verdict": "confirmed" or "denied" or "nuanced" or "unclear",
+      "detail": "Specific detail with dates, numbers, named events. Be precise and specific."
+    }
+  ],
+  "researchNote": "Brief note on scholarship quality and contested claims."
+}
+
+Include all 14 categories. Use verdict denied if no evidence found. Be factual, specific, and thorough.`;
+
+const STATUS_STEPS = [
+  'Dusting off the archives…',
+  'Rifling through history\'s filing cabinets…',
+  'Asking the historians nicely…',
+  'Checking the receipts…',
+  'Following the paper trail…',
+  'Cross-referencing the scandals…',
+  'Almost done — this one\'s got layers…',
+];
+
+const RATINGS = {
+  'high-concern':     { cls: 'r-high',    label: 'Very dirty'       },
+  'moderate-concern': { cls: 'r-mod',     label: 'Somewhat dirty'   },
+  'low-concern':      { cls: 'r-low',     label: 'Surprisingly clean' },
+  'complex':          { cls: 'r-complex', label: 'It\'s complicated' },
+};
+
+// Verdict display logic
+// For most categories: confirmed=Guilty, denied=Innocent, nuanced=Hard to say, unclear=Jury's out
+// For Positive Legacy: confirmed=Ugh, fine., denied=Predictably not, nuanced=Debatable credit, unclear=Jury's out
+function getVerdict(category, verdict) {
+  const isPositive = category.toLowerCase().includes('positive');
+  if (isPositive) {
+    return {
+      confirmed: { label: 'Ugh, fine.',        icon: 'UGH',  iconCls: 'fi-disappoint',  badgeCls: 'fv-disappoint'  },
+      denied:    { label: 'Predictably not',   icon: 'NAH',  iconCls: 'fi-predictable', badgeCls: 'fv-predictable' },
+      nuanced:   { label: 'Debatable credit',  icon: 'MEH',  iconCls: 'fi-hard',        badgeCls: 'fv-hard'        },
+      unclear:   { label: "Jury's out",        icon: '?',    iconCls: 'fi-jury',        badgeCls: 'fv-jury'        },
+    }[verdict] || { label: "Jury's out", icon: '?', iconCls: 'fi-jury', badgeCls: 'fv-jury' };
+  }
+  return {
+    confirmed: { label: 'Guilty',        icon: 'GLTÝ', iconCls: 'fi-guilty',   badgeCls: 'fv-guilty'   },
+    denied:    { label: 'Innocent',      icon: 'INNC', iconCls: 'fi-innocent', badgeCls: 'fv-innocent' },
+    nuanced:   { label: 'Hard to say',   icon: 'HMM',  iconCls: 'fi-hard',    badgeCls: 'fv-hard'     },
+    unclear:   { label: "Jury's out",    icon: '?',    iconCls: 'fi-jury',    badgeCls: 'fv-jury'     },
+  }[verdict] || { label: "Jury's out", icon: '?', iconCls: 'fi-jury', badgeCls: 'fv-jury' };
+}
+
+// ── Provider detection ──
+function detectProvider(key) {
+  key = (key || '').trim();
+  if (key.startsWith('sk-ant-'))  return { name: 'Anthropic', color: '#d97706' };
+  if (key.startsWith('gsk_'))     return { name: 'Groq',      color: '#16a34a' };
+  if (key.startsWith('AIzaSy'))   return { name: 'Gemini',    color: '#2563eb' };
+  if (key.startsWith('sk-'))      return { name: 'OpenAI',    color: '#7c3aed' };
+  return null;
+}
+
+async function callAI(apiKey, prompt) {
+  const provider = detectProvider(apiKey);
+  if (!provider) throw new Error('Unrecognized key format. Supported providers: Groq (gsk_…), Anthropic (sk-ant-…), Gemini (AIzaSy…), OpenAI (sk-…)');
+
+  if (provider.name === 'Groq') {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({ model: 'llama-3.3-70b-versatile', max_tokens: 2500, temperature: 0.2,
+        messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: prompt }] })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'Groq error ' + res.status); }
+    const d = await res.json();
+    return d.choices?.[0]?.message?.content || '';
+  }
+
+  if (provider.name === 'Anthropic') {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2500,
+        system: SYSTEM_PROMPT,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: prompt }] })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'Anthropic error ' + res.status); }
+    const d = await res.json();
+    return d.content.filter(b => b.type === 'text').map(b => b.text).join('');
+  }
+
+  if (provider.name === 'OpenAI') {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 2500, temperature: 0.2,
+        messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: prompt }] })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'OpenAI error ' + res.status); }
+    const d = await res.json();
+    return d.choices?.[0]?.message?.content || '';
+  }
+
+  if (provider.name === 'Gemini') {
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + encodeURIComponent(apiKey);
+    const makeBody = (search) => ({
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      ...(search ? { tools: [{ google_search: {} }] } : {}),
+      generationConfig: { temperature: 0.2, maxOutputTokens: 2500 }
+    });
+    let res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(makeBody(true)) });
+    if (!res.ok) res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(makeBody(false)) });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'Gemini error ' + res.status); }
+    const d = await res.json();
+    return d.candidates?.[0]?.content?.parts?.filter(p => p.text).map(p => p.text).join('') || '';
+  }
+}
+
+// ── Key panel ──
+function toggleKeyPanel() {
+  const panel = document.getElementById('keyPanel');
+  const isVisible = panel.style.display !== 'none';
+  panel.style.display = isVisible ? 'none' : 'block';
+  if (!isVisible) document.getElementById('keyInput').focus();
+}
+
+function updateKeyUI(key) {
+  const provider = detectProvider(key);
+  const dot   = document.getElementById('keyDot');
+  const label = document.getElementById('keyToggleLabel');
+  const detected = document.getElementById('keyDetected');
+  if (provider) {
+    dot.classList.add('active');
+    label.textContent = provider.name + ' key saved';
+    detected.textContent = provider.name + ' key recognized';
+    detected.style.color = provider.color;
+  } else {
+    dot.classList.remove('active');
+    label.textContent = 'Set API Key';
+    detected.textContent = key.length > 5 ? 'Key format not recognized' : '';
+    detected.style.color = '#c0392b';
+  }
+}
+
+function saveKey() {
+  const val = document.getElementById('keyInput').value.trim();
+  if (!val) return;
+  localStorage.setItem('dirt_api_key', val);
+  updateKeyUI(val);
+  const btn = document.querySelector('.key-save-btn');
+  btn.textContent = 'Saved!';
+  setTimeout(() => {
+    btn.textContent = 'Save';
+    // Hide panel after save if key is valid
+    if (detectProvider(val)) {
+      document.getElementById('keyPanel').style.display = 'none';
+    }
+  }, 1000);
+}
+
+// ── Search ──
+function prefill(name) {
+  document.getElementById('nameInput').value = name;
+  document.getElementById('nameInput').focus();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('dirt_api_key');
+  if (saved) {
+    document.getElementById('keyInput').value = saved;
+    updateKeyUI(saved);
+    if (detectProvider(saved)) {
+      document.getElementById('keyPanel').style.display = 'none';
+    }
+  }
+  document.getElementById('keyInput').addEventListener('input', e => updateKeyUI(e.target.value));
+  document.getElementById('keyInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveKey(); });
+  document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
+});
+
+async function runSearch() {
+  const name   = document.getElementById('nameInput').value.trim();
+  const apiKey = localStorage.getItem('dirt_api_key') || '';
+  if (!name) return;
+  if (!apiKey || !detectProvider(apiKey)) {
+    document.getElementById('keyPanel').style.display = 'block';
+    document.getElementById('keyInput').focus();
+    showError('You\'ll need an API key first — see the panel above.');
+    return;
+  }
+
+  const btn         = document.getElementById('searchBtn');
+  const statusBar   = document.getElementById('statusBar');
+  const statusText  = document.getElementById('statusText');
+  const resultsCard = document.getElementById('resultsCard');
+
+  btn.disabled = true;
+  statusBar.classList.add('visible');
+  resultsCard.classList.remove('visible');
+  document.getElementById('errorMsg').classList.remove('visible');
+
+  let step = 0;
+  statusText.textContent = STATUS_STEPS[0];
+  const ticker = setInterval(() => {
+    step = Math.min(step + 1, STATUS_STEPS.length - 1);
+    statusText.textContent = STATUS_STEPS[step];
+  }, 3000);
+
+  try {
+    const raw = await callAI(apiKey, 'Research the full historical ethical profile of: ' + name);
+    let cleaned = raw.replace(/```json|```/gi, '').trim();
+    const s = cleaned.indexOf('{'), e = cleaned.lastIndexOf('}');
+    if (s === -1) throw new Error('No JSON returned. Got: ' + raw.slice(0, 200));
+    renderResults(JSON.parse(cleaned.slice(s, e + 1)));
+  } catch (err) {
+    showError('Shovel broke: ' + err.message);
+  } finally {
+    clearInterval(ticker);
+    statusBar.classList.remove('visible');
+    btn.disabled = false;
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+function renderResults(d) {
+  document.getElementById('resultName').textContent   = d.name        || 'Unknown';
+  document.getElementById('resultDates').textContent  = d.dates       || '';
+  document.getElementById('summaryText').textContent  = d.summary     || '';
+  document.getElementById('researchNote').textContent = d.researchNote|| '';
+
+  const r     = RATINGS[d.overallRating] || RATINGS['complex'];
+  const badge = document.getElementById('ratingBadge');
+  badge.textContent = r.label;
+  badge.className   = 'rating-badge ' + r.cls;
+
+  const list = document.getElementById('findingsList');
+  list.innerHTML = '';
+
+  (d.findings || []).forEach(f => {
+    const v   = getVerdict(f.category, f.verdict);
+    const row = document.createElement('div');
+    row.className = 'finding';
+    row.innerHTML =
+      '<div class="find-icon ' + v.iconCls + '">' + v.icon + '</div>' +
+      '<div class="find-body">' +
+        '<div class="find-header">' +
+          '<span class="find-cat">' + esc(f.category) + '</span>' +
+          '<span class="find-verdict ' + v.badgeCls + '">' + v.label + '</span>' +
+        '</div>' +
+        '<div class="find-detail">' + esc(f.detail) + '</div>' +
+      '</div>';
+    list.appendChild(row);
+  });
+
+  document.getElementById('resultsCard').classList.add('visible');
+  document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>  color: var(--ink);
   line-height: 1;
   letter-spacing: -0.02em;
   margin-bottom: 0.7rem;
