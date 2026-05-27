@@ -74,7 +74,7 @@ body {
 .key-status { font-size: 0.75rem; font-weight: 600; min-height: 1.1rem; margin-bottom: 0.9rem; }
 
 .provider-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  display: grid; grid-template-columns: 1fr 1fr;
   gap: 0.6rem; border-top: 1.5px solid var(--border); padding-top: 1rem;
 }
 .prov-card {
@@ -217,7 +217,7 @@ body {
 @media (max-width: 480px) {
   .card-head { flex-direction: column; }
   .findings, .summary, .research-note { padding-left: 1.1rem; padding-right: 1.1rem; }
-  .provider-grid { grid-template-columns: 1fr 1fr; }
+
 }
 
 /* ── Home screen banner ── */
@@ -359,7 +359,13 @@ body {
         <div class="prov-desc">Google's model via AI Studio.</div>
         <div class="prov-key">Key starts with AIzaSy</div>
       </a>
-      <a class="prov-card" href="https://platform.openai.com/api-keys" target="_blank">
+      <a class="prov-card" href="https://openrouter.ai/keys" target="_blank">
+        <div class="prov-name">OpenRouter</div>
+        <div class="prov-free">Free tier — no credit card</div>
+        <div class="prov-desc">Access to many free models. Easy signup.</div>
+        <div class="prov-key">Key starts with sk-or-</div>
+      </a>
+      <a class="prov-card" href="https://platform.openai.com/api-keys" target="_blank" style="grid-column: 1 / -1; max-width: 50%; margin: 0 auto; width: 100%;">
         <div class="prov-name">OpenAI</div>
         <div class="prov-free">Pay per use</div>
         <div class="prov-desc">GPT-4o mini. Requires billing setup.</div>
@@ -501,6 +507,7 @@ function detectProvider(key) {
   if (key.startsWith('sk-ant-')) return { name: 'Anthropic', color: '#d97706' };
   if (key.startsWith('gsk_'))    return { name: 'Groq',      color: '#16a34a' };
   if (key.startsWith('AIzaSy')) return { name: 'Gemini',    color: '#2563eb' };
+  if (key.startsWith('sk-or-')) return { name: 'OpenRouter', color: '#e05a2b' };
   if (key.startsWith('sk-'))    return { name: 'OpenAI',    color: '#7c3aed' };
   return null;
 }
@@ -553,6 +560,26 @@ async function callAI(apiKey, userPrompt) {
     });
     const d = await r.json();
     if (!r.ok) throw new Error('OpenAI: ' + (d.error?.message || r.status));
+    return d.choices[0].message.content;
+  }
+
+  if (p.name === 'OpenRouter') {
+    const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + apiKey,
+        'HTTP-Referer': window.location.href,
+        'X-Title': 'Dirt Digger'
+      },
+      body: JSON.stringify({
+        model: 'meta-llama/llama-3.3-70b-instruct:free',
+        max_tokens: 4500, temperature: 0.2,
+        messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: userPrompt }]
+      })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error('OpenRouter: ' + (d.error?.message || r.status));
     return d.choices[0].message.content;
   }
 
