@@ -593,23 +593,32 @@ async function callAI(apiKey, userPrompt) {
   }
 
   if (p.name === 'OpenRouter') {
-    const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + apiKey,
-        'HTTP-Referer': window.location.href,
-        'X-Title': 'Dirt Digger'
-      },
-      body: JSON.stringify({
-        model: 'meta-llama/llama-3.3-70b-instruct:free',
-        max_tokens: 4500, temperature: 0.2,
-        messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: userPrompt }]
-      })
-    });
-    const d = await r.json();
-    if (!r.ok) throw new Error('OpenRouter: ' + (d.error?.message || r.status));
-    return d.choices[0].message.content;
+    const freeModels = [
+      'meta-llama/llama-3.3-70b-instruct:free',
+      'meta-llama/llama-3.1-8b-instruct:free',
+      'mistralai/mistral-7b-instruct:free',
+      'google/gemma-2-9b-it:free',
+    ];
+    let lastErr = '';
+    for (const model of freeModels) {
+      const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + apiKey,
+          'HTTP-Referer': window.location.href,
+          'X-Title': 'Dirt Digger'
+        },
+        body: JSON.stringify({
+          model, max_tokens: 4500, temperature: 0.2,
+          messages: [{ role: 'system', content: SYSTEM_PROMPT }, { role: 'user', content: userPrompt }]
+        })
+      });
+      const d = await r.json();
+      if (r.ok && d.choices?.[0]?.message?.content) return d.choices[0].message.content;
+      lastErr = d.error?.message || r.status;
+    }
+    throw new Error('OpenRouter: all free models failed — ' + lastErr);
   }
 
   if (p.name === 'Gemini') {
